@@ -15,91 +15,12 @@
    real(8),allocatable                :: Ws(:)                          ! eigenvalues
    complex(8), allocatable            :: HE(:,:)           ! for slepc test
    logical                            :: ltest
-
     integer                           :: ngkpt                  ! number of k-points
     real(8),allocatable               :: kpt(:,:)               ! k-points
-! KBE
-    real(8), parameter                :: CORE_CNST = 2.418884326505d0
-    real(8), parameter                :: HA2EV     = 27.2113834d0               ! HA  = HA2EV eV
-    real(8), parameter                :: AUT2FS    = CORE_CNST/1.D2             ! SEC-femto = AUT2FS unit of Time in fs
-    real(8), parameter                :: FS2AUT    = 1.D2/CORE_CNST             ! femto-SEC = FS2AUT unit of Time in A.U. (2.4189 10^(-17) sec)
-    real(8), parameter                :: AU2J      = 4.3597482D-18              ! Ha = AU2J Joule
-    real(8), parameter                :: J2AU      = 1.D0/AU2J                  ! J  = J2AU Ha
-    real(8), parameter                :: AU2M      = 5.2917720859D-11           ! Bohr = AU2M m
-    real(8), parameter                :: M2AU      = 1.D0/AU2M                  ! m    = M2AU Bohr
-    real(8), parameter                :: AU2SEC    = 2.418884326505D-17         ! Tau = AU2SEC sec
-    real(8), parameter                :: SEC2AU    = 1.D0/AU2SEC                ! sec = SEC2AU Tau
-    real(8), parameter                :: kWCMm22AU = 1.D7*J2AU/(M2AU**2*SEC2AU) ! kW/cm^2 = kWCMm22AU * AU
-    real(8)                           :: Intensity              ! intensity of electromagmetic wave
-    real(8)                           :: E0ampl                 ! amplitude of electromagnetic wave E0
-    complex(8), allocatable           :: G_k(:,:,:)             ! Green functions 
-    complex(8), allocatable           :: Hs_k(:,:,:)            ! Perturbed Hamiltonian H(k)
-    complex(8), allocatable           :: Hs_k2(:,:,:)           ! Perturbed Hamiltonian H(k)
-    complex(8), allocatable           :: Psi_ik_t(:,:,:)        ! Dynamical wave function
-    complex(8), allocatable           :: Psi_ik_t2(:,:)         ! Dynamical wave function in next time step
-    complex(8), allocatable           :: Psi_ik_t3(:,:)         ! Dynamical wave function in next time step
-    complex(8), allocatable           :: Psi_ik_t4(:,:)         ! Dynamical wave function in next time step
-    complex(8), allocatable           :: Psi_ik_t5(:,:)         ! Dynamical wave function in next time step
-    complex(8), allocatable           :: Psi_ik_tx(:,:,:)       ! Dynamical wave function in next time step
-    complex(8), allocatable           :: Gkt(:,:,:)             ! for dynamical equation
-    complex(8), allocatable           :: Gkt2(:,:)              ! for dynamical equation
-    complex(8), allocatable           :: Gkt3(:,:)              ! for dynamical equation
-    complex(8), allocatable           :: Gkt4(:,:)              ! for dynamical equation
-    complex(8), allocatable           :: Gkt5(:,:)              ! for dynamical equation
-    complex(8), allocatable           :: Gktx(:,:,:)            ! for dynamical equation
-    complex(8), allocatable           :: rknm(:,:,:,:)          ! matrix elements <psi_nk | r | psi_mk>
-    complex(8), allocatable           :: U_k(:,:)               ! perturbation U(t)
-    real(8), allocatable              :: Pol(:,:)               ! dynamical polarization
-    complex(8), allocatable           :: Wf(:)                  ! working arrays for QSHEP
-    complex(8), allocatable           :: dkwf(:,:)              ! working arrays for QSHEP
-    complex(8), allocatable           :: dkwfj(:,:,:)           ! working arrays for QSHEP
-    real(8), allocatable              :: Rwf(:)                 ! working arrays for QSHEP
-    real(8), allocatable              :: Xw(:)                  ! working arrays for QSHEP
-    real(8), allocatable              :: Yw(:)                  ! working arrays for QSHEP
-    real(8), allocatable              :: RSQ(:)                 ! working arrays for QSHEP
-    real(8), allocatable              :: Ashep(:,:)             ! working arrays for QSHEP
-    integer, allocatable              :: LNEXT(:)               ! working arrays for QSHEP
-    complex(8), allocatable           :: Psi_ik_t1(:)           ! for H_time_step
-    character(2)                      :: L_td                   ! 'EU'- Euler method 'CN' - Crank-Nikolson
-    real(8)                           :: Ex                     ! energy
-    integer, parameter                :: nt = 100                ! number of time steps
-    real(8), parameter                :: dt = 0.001d0*FS2AUT    ! time step (fs)
-    real(8)                           :: E0(3)                  ! direction and amplitude of electromagnetic wave 
-    logical, allocatable              :: Kc(:,:)                ! commutation matrix
-    complex(8), allocatable           :: IxH(:,:)               ! I*H matrix
-    complex(8), allocatable           :: KIxH(:,:)              ! K*I*H matrix
-    complex(8), allocatable           :: At0(:,:)               ! At0 = I-IxH+K*I*H
-    complex(8), allocatable           :: At1(:,:)               ! At1 = I+IxH-K*I*H
-    complex(8), allocatable           :: At1_1(:,:)             ! At1^(-1)
-    complex(8), allocatable           :: At1At(:,:)             ! At1^(-1)*At0
-    complex(8)                        :: idt2                   ! i*dt/2
-    integer                           :: N2                     ! N2=w90basis**2
-    complex(8), allocatable           :: Ax(:,:)                ! working matrix for Psi 
-    complex(8), allocatable           :: Bx(:,:)                ! working matrix for Psi 
-    complex(8), allocatable           :: Px(:,:)                ! working matrix for Psi 
-    integer                           :: iterx                  ! max iteration number in CN method for G 
-    integer                           :: iterx2                 ! max iteration number in CN method for Psi
-    complex(8), allocatable           :: vecGkt(:,:)
-    complex(8), allocatable           :: vecGktdt(:,:)
-    complex(8), allocatable           :: Gktdt(:,:)
-    complex(8), allocatable           :: vecG1(:,:)    !TEST
-    complex(8), allocatable           :: At2(:,:)      !TEST
-! KBE
-
-
-
   contains
 
 
-! KBE
-INCLUDE "./module_kbe.F90"
-
-
-
-
-
 !INCLUDE "./subroutines/bse_subs.f90"
-
 complex(8) function matrizelbse(coultype,tolr,w90basis,ediel,lc,ez,w,r0,ngrid,rlat,est1,ec1,ev1,vbc1 &
          ,vbv1,kpt1,est2,ec2,ev2,vbc2,vbv2,kpt2) !funcao para calcular o elemento de matriz da matriz bse
 	implicit none
