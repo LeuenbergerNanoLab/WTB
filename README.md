@@ -37,7 +37,7 @@ Configure the package with complex scalars
 
 Make installation:
 
-> make PETSC_DIR=/home/3811/petsc-3.22.2 PETSC_ARCH=arch-linux-c-debug all
+> make PETSC_DIR=/home/3811/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt all
 
 Return to *src* directory
 
@@ -57,29 +57,19 @@ and untar
 
 > export PETSC_DIR={full path to petsc folder}
 
-> export PETSC_ARCH=arch-linux-c-debug
+> export PETSC_ARCH=arch-linux-c-opt
 
 > ./configure
 
-> make SLEPC_DIR=/home/3811/slepc-3.22.2 PETSC_DIR=/home/3811/petsc-3.22.2 PETSC_ARCH=arch-linux-c-debug
+> make SLEPC_DIR=/home/3811/slepc-3.22.2 PETSC_DIR=/home/3811/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt
+
+Go to *src* folder and make installation of WTB package
+
+> mkdir bin
+
+> make
 
 
-
-
-```
-module load openmpi/4.0.2-intel20.4
-```
-
-The remaining installation will be the same
-
-
-## Examples on Fortran
-
-[Example 1](Example) solve large system for 3000 x 3000 and calculate 1000 first lowest eigenvalues.
-
-[Example 2](Example_2) calculate eigenvalues and eigenvectors, store them into arrays, and check the solutions. 
-
-[Example 3](Example_3) use slepc_solver subroutine to solve 8000x8000 Hamiltonian and print convergence process.
 
 
   
