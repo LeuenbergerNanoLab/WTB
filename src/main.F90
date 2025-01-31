@@ -55,13 +55,6 @@ endif
 	end if
 call P_wait
 
-!if(Process==1) then
-!   print *,'after rkmesh'
-!   print *,'Process=',Process,'  ngrid=',ngrid
-!   print *,'Process=',Process,'  rlatv=',rlatv
-!endif
-
-
    call MSG('MAIN: write log.dat file')
    if(Process==0) then
     !print *,'open log.dat file'
@@ -114,18 +107,6 @@ call P_wait
 		     ebse0,ebsef,numbse,cshift,ktol,params,kpaths,kpathsbse,orbw,ediel, &
 		     exc,mshift,coultype,ez,w,r0,lc,rk,meshtype,bsewf,excwf0,excwff,dtfull,cpol,tmcoef)
 
-! KBE
-    kbe = .FALSE.
-    lkbe = kbe
-    !if(Process==0) print *,'wtb_main: KBE=',kbe
-    !if(Process==0) print *,'wtb_main: lkbe=',lkbe
-    if(lkbe) then
-    call MSG('MAIN: call kbe_solver')
-	  call kbe_solver(nthreads,outputfolder,calcparms,ngrid,nc,nv,numdos, &
-		     ebse0,ebsef,numbse,cshift,ktol,params,kpaths,kpathsbse,orbw,ediel, &
-		     exc,mshift,coultype,ez,w,r0,lc,rk,meshtype,bsewf,excwf0,excwff,dtfull,cpol,tmcoef)
-    endif 
-! KBE
 
 	 if(Process==0) write(2077,*) "BSE and Single particle dielectric calculation finished"
      if(Process==0) call flush(2077)
@@ -140,22 +121,6 @@ call P_wait
      if(Process==0) call flush(2077)	     	
 	end if	
 	
-!*** KBE
-!    kbe = .TRUE.
-!    lkbe = kbe
-!    print *,'wtb_main: KBE=',kbe
-!	if (kbe) then
-!      write(2077,*) "Kadanoff-Baym Equation (KBE) solver for nonlinear calculations"
-!!    call kbe(outputfolder)
-!	  call kbe_solver(nthreads,outputfolder,calcparms,ngrid,nc,nv,numdos, &
-!		     ebse0,ebsef,numbse,cshift,ktol,params,kpaths,kpathsbse,orbw,ediel, &
-!		     exc,mshift,coultype,ez,w,r0,lc,rk,meshtype,bsewf,excwf0,excwff,dtfull,cpol,tmcoef)
-!
- !    write(2077,*) "KBE is finished"
-!      call flush(2077)
-!    endif
-!*** KBE
-
 	if (bsekpath .and. bsetbnd) then
 	 if(Process==0) write(2077,*) "ERROR: Choose BSE_BND=T or BSET_BND=T not both"
 	 stop
