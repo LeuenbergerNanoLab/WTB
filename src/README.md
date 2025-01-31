@@ -48,6 +48,8 @@ Configure few variables for SLEPc installation:
 
 > export PETSC_ARCH=arch-linux-c-opt
 
+Configure the package:
+
 > ./configure
 
 Make installation of SLEPc library (the actual installation command will be provided by *configure*)
