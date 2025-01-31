@@ -40,6 +40,8 @@ and untar
 
 > cd slepc-3.22.2/
 
+Configure few variables for SLEPc installation:
+
 > export SLEPC_DIR=$PWD
 
 > export PETSC_DIR={full path to petsc folder}
