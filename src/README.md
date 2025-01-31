@@ -2,7 +2,7 @@
 
 ## How to install the code:
 
-Load the appropriate compilers, for example:
+Load the appropriate compiler and MPI package, for example:
 
 > module load openmpi/4.1.5:intel-2020
 
