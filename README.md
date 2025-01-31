@@ -11,5 +11,5 @@ What's new:
 
 The calculation time for [Example-3](examples/example-3) is reduced from 680 s using MKL solver to 3 s using SLEPc solver on 64 cores.
 
-How to install the code see README.md in *src* folder
+How to install the code see [README.md](src/README.md) in *src* folder
 
