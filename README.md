@@ -55,7 +55,7 @@ and untar
 
 > export SLEPC_DIR=$PWD
 
-> export PETSC_DIR=<full path to petsc folder>
+> export PETSC_DIR={full path to petsc folder}
 
 > export PETSC_ARCH=arch-linux-c-debug
 
