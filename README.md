@@ -2,7 +2,7 @@
 
 This is the improved version of [WanTiBexos](https://github.com/ac-dias/wantibexos) code,
 
-see
+see [DOI](https://doi.org/10.1016/j.cpc.2022.108636)
 
 ## Version 1.0
 What's new:
