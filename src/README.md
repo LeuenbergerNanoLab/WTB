@@ -54,6 +54,8 @@ Make installation of SLEPc library (the actual installation command will be prov
 
 Go to *src* folder and make installation of WTB package
 
+> cd ..
+
 > mkdir bin
 
 > make
