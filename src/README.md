@@ -22,7 +22,7 @@ Configure the package with complex scalars
 
 > ./configure --with-scalar-type=complex --with-debugging=no
 
-Make installation:
+Make installation (the actual installation command will be provided by *configure*):
 
 > make PETSC_DIR=/home/3811/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt all
 
@@ -47,6 +47,8 @@ and untar
 > export PETSC_ARCH=arch-linux-c-opt
 
 > ./configure
+
+Make installation of SLEPc library (the actual installation command will be provided by *configure*)
 
 > make SLEPC_DIR=/home/3811/slepc-3.22.2 PETSC_DIR=/home/3811/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt
 
