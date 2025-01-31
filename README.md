@@ -1,6 +1,6 @@
 # WTB
 
-This is the improved version of WanTiBexos code
+This is the improved version of [WanTiBexos](https://github.com/ac-dias/wantibexos) code,
 
 see
 
