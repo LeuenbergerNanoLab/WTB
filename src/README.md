@@ -8,7 +8,7 @@ Load the appropriate compilers, for example:
 
 Download the code, untar and go to *src* folder.
 
-Download PETSc library archive:
+Download [PETSc](https://petsc.org/release/) library archive:
 
 > wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.22.2.tar.gz
 
@@ -30,7 +30,7 @@ Return to *src* directory
 
 > cd ..
 
-Download SLEPc library archive:
+Download [SLEPc](https://slepc.upv.es) library archive:
 
 > wget https://slepc.upv.es/download/distrib/slepc-3.22.2.tar.gz
 
