@@ -7,7 +7,7 @@ see A.C. Dias, J.F.R.V. Silveira, F. Qu "WanTiBEXOS: A Wannier based Tight Bindi
 ## Version 1.0
 What's new:
 
-- the MKL solver for Bethe-Salpeter equation was replaced by MPI+GPU paralel solver from the Scalable Library for Eigenvalue Problem Computations (SLEPc)
+- the MKL solver for Bethe-Salpeter equation was replaced by MPI+GPU paralel solver from the [Scalable Library for Eigenvalue Problem Computations (SLEPc)](https://slepc.upv.es)
 
 The calculation time for Example-3 is reduced from 680 s using MKL solver to 3 s using SLEPc solver on 64 cores.
 
