@@ -6,9 +6,11 @@ Load the appropriate compilers, for example:
 
 > module load openmpi/4.1.5:intel-2020
 
-Download the code, untar and go to *src* folder.
+Download the code, untar and go to *src* folder. 
 
-Download [PETSc](https://petsc.org/release/) library archive:
+Before installation of WTB code, it is necessary to install two scientific libraries, [PETSc](https://petsc.org/release/) and [SLEPc](https://slepc.upv.es).
+
+Download PETSc library archive:
 
 > wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.22.2.tar.gz
 
@@ -30,7 +32,7 @@ Return to *src* directory
 
 > cd ..
 
-Download [SLEPc](https://slepc.upv.es) library archive:
+Download SLEPc library archive:
 
 > wget https://slepc.upv.es/download/distrib/slepc-3.22.2.tar.gz
 
