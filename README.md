@@ -2,7 +2,7 @@
 
 This is the improved version of [WanTiBexos](https://github.com/ac-dias/wantibexos) code,
 
-see A.C. Dias, J.F.R.V. Silveira, F. Qu, Comp. Phys. Comm., 108636 (2022) [DOI](https://doi.org/10.1016/j.cpc.2022.108636)
+see A.C. Dias, J.F.R.V. Silveira, F. Qu "WanTiBEXOS: A Wannier based Tight Binding code for electronic band structure, excitonic and optoelectronic properties of solids" Comp. Phys. Comm., 108636 (2022) [DOI](https://doi.org/10.1016/j.cpc.2022.108636)
 
 ## Version 1.0
 What's new:
