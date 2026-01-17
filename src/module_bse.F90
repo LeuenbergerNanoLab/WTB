@@ -4300,6 +4300,7 @@ subroutine spdielraw(nthreads,outputfolder,renorm,params,ngrid,nc,nv,ebse0,ebsef
 	close(200)
 	close(300)
 	close(301)
+	close(302)
 	close(303)
 	close(304)
 	close(305)	
@@ -4516,6 +4517,7 @@ subroutine spdielrawpol(nthreads,outputfolder,renorm,params,ngrid,nc,nv,ebse0,eb
 	close(200)
 	close(300)
 	close(301)
+	close(302)
 	close(303)
 	close(304)
  endif
