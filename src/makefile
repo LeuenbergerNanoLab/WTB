@@ -1,8 +1,8 @@
 default: wtb
 
 export DIR=${PWD}
-export SLEPC_DIR=${DIR}/slepc-3.22.2
 export PETSC_DIR=${DIR}/petsc-3.22.2
+export SLEPC_DIR=${DIR}/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2
 export PETSC_ARCH=arch-linux-c-opt
 
 OBJS = mpi_p.o \
