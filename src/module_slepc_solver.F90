@@ -151,18 +151,21 @@ contains
 
    subroutine SLEPc_print(comment)
     character(*)          :: comment
-    integer               :: l1,l2
+    integer               :: l1     !,l2
+    character(len=60)     :: cp
     PetscCallA(PetscTime(tsf,ierr))
+    cp = ' '
     l1 = len(trim(adjustl(comment)))
     if(l1>=60) then
      if(rank==0) print 1,trim(adjustl(comment)),(tsf-ts0)
     else
-     l2 = 60 - l1
-     if(rank==0) print 2,trim(adjustl(comment)),' ',(tsf-ts0)
+  !   l2 = 60 - l1
+     cp(1:l1) = trim(adjustl(comment))
+     if(rank==0) print 2,cp,(tsf-ts0)
     endif
     ts0 = tsf
- 1  format(A<l1>,' (',F10.3,' s)')
- 2  format(A<l1>,A<l2>,' (',F10.3,' s)')
+ 1  format(A,' (',F10.3,' s)')
+ 2  format(A60,' (',F10.3,' s)')
    end subroutine SLEPc_print
 
 
