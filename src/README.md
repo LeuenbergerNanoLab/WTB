@@ -119,4 +119,6 @@ Go to WTB directory and make *bin* folder:
 
 > cd src
 
+Make installation of WTB package:
+
 > make
