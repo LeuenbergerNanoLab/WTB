@@ -105,3 +105,12 @@ export PETSC_DIR=${DIR}/petsc-3.22.2
 export SLEPC_DIR=${DIR}/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2
 export PETSC_ARCH=arch-linux-c-opt
 ```
+Go to WTB directory and make *bin* folder:
+
+> cd WTB
+
+> mkdir bin
+
+> cd src
+
+> make
