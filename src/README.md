@@ -88,6 +88,8 @@ Download PETSc library archive in *src* folder:
 
 > wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.22.2.tar.gz
 
+> tar -xvf petsc-3.22.2.tar.gz
+
 > cd petsc-3.22.2
 
 Configure the package with SLEPc library:
