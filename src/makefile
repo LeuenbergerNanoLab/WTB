@@ -1,8 +1,8 @@
 default: wtb
 
 export DIR=${PWD}
-export PETSC_DIR=${DIR}/petsc-3.22.2
-export SLEPC_DIR=${DIR}/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2
+export PETSC_DIR=${DIR}/../src/petsc-3.22.2
+export SLEPC_DIR=${DIR}/../src/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2
 export PETSC_ARCH=arch-linux-c-opt
 
 OBJS = mpi_p.o \
@@ -27,7 +27,6 @@ include ${SLEPC_DIR}/lib/slepc/conf/slepc_common
 
 
 
-
 mpi_p.f90:
 module_math.o:
 module_optics.o:      module_math.o
@@ -45,4 +44,3 @@ main.o:               module_hamiltonian.o \
                       module_pce.o \
                       module_tools.o \
                       module_berry.o
-

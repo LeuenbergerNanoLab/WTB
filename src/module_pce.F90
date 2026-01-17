@@ -9,116 +9,116 @@
 
 !INCLUDE "./subprograms/pce-code.f90"
 subroutine pcecalc(outputfolder,noptics,mode,ctemp,ses,thickmaxm,indgap,dirgap)
-	integer :: i,erro,iaux
-	character(len=70) :: outputfolder
-	double precision :: ctemp
-	character(len=6) :: ses
-	character(len=3) :: mode
-	double precision :: noptics	
-	integer :: nsolar
-	integer,parameter :: nvec=6001
-	integer,parameter :: nth= 500
-	!double precision,dimension(nsolar,2) :: solarinc
-	double precision,dimension(int(noptics),2) :: abscoef
-	double precision,allocatable,dimension(:,:) :: solarinc
-	!double precision,allocatable,dimension(:,:) :: abscoef	
-	double precision,dimension(nvec,2) :: isolar,isolarm,sepflux
-	double precision,dimension(nvec,2) :: iabscoef,iabscoefsq
-	double precision,dimension(nvec,2) :: bbir,bbpflux
-	double precision,dimension(nvec,2) :: absc
-	double precision,dimension(nvec-1,2) :: absc2	
-	double precision,dimension(nvec,2) :: isolarn	
-	double precision,dimension(nvec,2) :: auxvec !vetor utilizado para integracoes
-	double precision :: e0, ef
-	double precision :: res,ephoton,eaux,res2
-	double precision :: dirgap,indgap
-	double precision :: j0r,j0,jsc1,voc,j01,j1,j2,ff
-	double precision :: pin,pm,voct,vmaxt,vmax
-	double precision :: deltag,fr
-	double precision :: pce,pcemax,thickness   !,negpower
-	double precision,dimension(7) :: aflag 
-	character(len=100) :: flag
-	double precision :: thickmaxm !maximum thicknes in  m
-	double precision,parameter :: thickmin = 0E-9
-	integer :: imax
-	double precision :: pceaux	
-	double precision :: faux1,faux2,faux3,faux4,faux5,faux6,faux7,faux8,faux9
-	CHARACTER(LEN=30) :: Format
-	double precision,parameter :: c =299792458.0 !speed of light, m/s
-	double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
-	double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
-	double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
-	double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
-	double precision,parameter :: pi=acos(-1.0)	
+    integer :: i,erro,iaux
+    character(len=70) :: outputfolder
+    double precision :: ctemp
+    character(len=6) :: ses
+    character(len=3) :: mode
+    double precision :: noptics 
+    integer :: nsolar
+    integer,parameter :: nvec=6001
+    integer,parameter :: nth= 500
+    !double precision,dimension(nsolar,2) :: solarinc
+    double precision,dimension(int(noptics),2) :: abscoef
+    double precision,allocatable,dimension(:,:) :: solarinc
+    !double precision,allocatable,dimension(:,:) :: abscoef 
+    double precision,dimension(nvec,2) :: isolar,isolarm,sepflux
+    double precision,dimension(nvec,2) :: iabscoef,iabscoefsq
+    double precision,dimension(nvec,2) :: bbir,bbpflux
+    double precision,dimension(nvec,2) :: absc
+    double precision,dimension(nvec-1,2) :: absc2   
+    double precision,dimension(nvec,2) :: isolarn   
+    double precision,dimension(nvec,2) :: auxvec !vetor utilizado para integracoes
+    double precision :: e0, ef
+    double precision :: res,ephoton,eaux,res2
+    double precision :: dirgap,indgap
+    double precision :: j0r,j0,jsc1,voc,j01,j1,j2,ff
+    double precision :: pin,pm,voct,vmaxt,vmax
+    double precision :: deltag,fr
+    double precision :: pce,pcemax,thickness   !,negpower
+    double precision,dimension(7) :: aflag 
+    character(len=100) :: flag
+    double precision :: thickmaxm !maximum thicknes in  m
+    double precision,parameter :: thickmin = 0E-9
+    integer :: imax
+    double precision :: pceaux  
+    double precision :: faux1,faux2,faux3,faux4,faux5,faux6,faux7,faux8,faux9
+    CHARACTER(LEN=30) :: Format
+    double precision,parameter :: c =299792458.0 !speed of light, m/s
+    double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
+    double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
+    double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
+    double precision,parameter :: pi=acos(-1.0) 
 
-	!tipo de calculo
-	!definir arquivos de input/output
+    !tipo de calculo
+    !definir arquivos de input/output
 
-	if (mode .eq. "IPA") then
-	
-	!write(*,*) outputfolder
+    if (mode .eq. "IPA") then
+    
+    !write(*,*) outputfolder
 
  if(Process==0) then
-	OPEN(UNIT=500, FILE=trim(outputfolder)//"sp_absorption_coef.dat",STATUS='old', IOSTAT=erro)	
-	if (erro/=0) stop "Error opening sp_absorption_coef input file"
-	
-	OPEN(UNIT=600, FILE= trim(outputfolder)//"PCE-Limit-sp.dat",STATUS='unknown', IOSTAT=erro)
-    	if (erro/=0) stop "Erro opening PCE-Limit-sp output file" 
-    	
-    	OPEN(UNIT=700, FILE= trim(outputfolder)//"SLME-sp.dat",STATUS='unknown', IOSTAT=erro)
-    	if (erro/=0) stop "Erro opening SLME-sp output file" 		
-			
-	else if (mode .eq. "BSE") then
-	
-	OPEN(UNIT=500, FILE=trim(outputfolder)//"bse_absorption_coef.dat",STATUS='old', IOSTAT=erro)
-	if (erro/=0) stop "Error opening bse_absorption_coef input file"
-	
-	OPEN(UNIT=600, FILE= trim(outputfolder)//"PCE-Limit-bse.dat",STATUS='unknown', IOSTAT=erro)
-    	if (erro/=0) stop "Erro opening PCE-Limit-bse output file" 
-    	
+    OPEN(UNIT=500, FILE=trim(outputfolder)//"sp_absorption_coef.dat",STATUS='old', IOSTAT=erro) 
+    if (erro/=0) stop "Error opening sp_absorption_coef input file"
+    
+    OPEN(UNIT=600, FILE= trim(outputfolder)//"PCE-Limit-sp.dat",STATUS='unknown', IOSTAT=erro)
+        if (erro/=0) stop "Erro opening PCE-Limit-sp output file" 
+        
+        OPEN(UNIT=700, FILE= trim(outputfolder)//"SLME-sp.dat",STATUS='unknown', IOSTAT=erro)
+        if (erro/=0) stop "Erro opening SLME-sp output file"        
+            
+    else if (mode .eq. "BSE") then
+    
+    OPEN(UNIT=500, FILE=trim(outputfolder)//"bse_absorption_coef.dat",STATUS='old', IOSTAT=erro)
+    if (erro/=0) stop "Error opening bse_absorption_coef input file"
+    
+    OPEN(UNIT=600, FILE= trim(outputfolder)//"PCE-Limit-bse.dat",STATUS='unknown', IOSTAT=erro)
+        if (erro/=0) stop "Erro opening PCE-Limit-bse output file" 
+        
         OPEN(UNIT=700, FILE= trim(outputfolder)//"SLME-bse.dat",STATUS='unknown', IOSTAT=erro)
-    	if (erro/=0) stop "Erro opening SLME-bse output file" 			
-	
-	else
-		write(*,*) "Wrong mode"
-		stop
-	
-	end if 
+        if (erro/=0) stop "Erro opening SLME-bse output file"           
+    
+    else
+        write(*,*) "Wrong mode"
+        stop
+    
+    end if 
  endif
-	
-	
-	if(Process==0) read(500,*) flag
+    
+    
+    if(Process==0) read(500,*) flag
     call P_sendA(flag)
 
-	aflag = 0.0
-	
-	do i=1,int(noptics)
-		if(Process==0) read(500,*) aflag(1),aflag(2),aflag(3),aflag(4),aflag(5),aflag(6),aflag(7)
+    aflag = 0.0
+    
+    do i=1,int(noptics)
+        if(Process==0) read(500,*) aflag(1),aflag(2),aflag(3),aflag(4),aflag(5),aflag(6),aflag(7)
         call P_sendR1(aflag,7)
 
-		abscoef(i,1) = aflag(1)
-		abscoef(i,2) = aflag(2)+aflag(3)+aflag(4)		
-		!abscoef(i,2) = aflag(2)+aflag(3)+aflag(4)+2.0*(aflag(5)+aflag(6)+aflag(7))
+        abscoef(i,1) = aflag(1)
+        abscoef(i,2) = aflag(2)+aflag(3)+aflag(4)       
+        !abscoef(i,2) = aflag(2)+aflag(3)+aflag(4)+2.0*(aflag(5)+aflag(6)+aflag(7))
 
-		!write(*,*) abscoef(i,1),abscoef(i,2)
+        !write(*,*) abscoef(i,1),abscoef(i,2)
 
-		aflag = 0.0
+        aflag = 0.0
 
-		!write(*,*) abscoef(i,1),abscoef(i,2)
+        !write(*,*) abscoef(i,1),abscoef(i,2)
 
-	end do	
-	
+    end do  
+    
 
-	
-	!solar emission spectra (ses) https://www.pveducation.org/pvcdrom/appendices/standard-solar-spectra
+    
+    !solar emission spectra (ses) https://www.pveducation.org/pvcdrom/appendices/standard-solar-spectra
 
-	if ( ses .eq. "AM15G") then
-	
-	nsolar = 2002
-	allocate(solarinc(nsolar,2))
-	
+    if ( ses .eq. "AM15G") then
+    
+    nsolar = 2002
+    allocate(solarinc(nsolar,2))
+    
 solarinc(1,1) = 280.0
 solarinc(1,2) = 4.7309E-23
 solarinc(2,1) = 280.5
@@ -4123,13 +4123,13 @@ solarinc(2001,1) = 3995.0
 solarinc(2001,2) = 7.2100E-03
 solarinc(2002,1) = 4000.0
 solarinc(2002,2) = 7.1043E-03
-	
-	
-	else if (ses .eq. "AM15D") then
-	
-	nsolar =2002
-	allocate(solarinc(nsolar,2))
-	
+    
+    
+    else if (ses .eq. "AM15D") then
+    
+    nsolar =2002
+    allocate(solarinc(nsolar,2))
+    
 solarinc(1,1) = 280.0
 solarinc(1,2) = 2.5361E-26
 solarinc(2,1) = 280.5
@@ -8133,13 +8133,13 @@ solarinc(2000,2) = 7.3894E-03
 solarinc(2001,1) = 3995.0
 solarinc(2001,2) = 7.2263E-03
 solarinc(2002,1) = 4000.0
-solarinc(2002,2) = 7.1199E-03	
-	
-	else if (ses .eq. "AM0") then
-	
-	nsolar =1697
-	allocate(solarinc(nsolar,2))	
-	
+solarinc(2002,2) = 7.1199E-03   
+    
+    else if (ses .eq. "AM0") then
+    
+    nsolar =1697
+    allocate(solarinc(nsolar,2))    
+    
 solarinc(1,1) = 119.5
 solarinc(1,2) = 6.190E-05
 solarinc(2,1) = 120.5
@@ -11533,208 +11533,208 @@ solarinc(1695,2) = 2.950E-10
 solarinc(1696,1) = 400000
 solarinc(1696,2) = 1.010E-10
 solarinc(1697,1) = 1000000
-solarinc(1697,2) = 3.380E-12	
-	
-	else
-	
-		if(Process==0) write(*,*) "Wrong SES value"
-		stop
-	
-	end if
-   	    	   	
-	
+solarinc(1697,2) = 3.380E-12    
+    
+    else
+    
+        if(Process==0) write(*,*) "Wrong SES value"
+        stop
+    
+    end if
+                
+    
 
-	deltag= dirgap-indgap
-	fr = dexp(-deltag/(keV*ctemp))
-	
+    deltag= dirgap-indgap
+    fr = dexp(-deltag/(keV*ctemp))
+    
 
-	!homogeneizando os dados de input mediante interpolacao	
-	e0 = solarinc(1,1)
-	ef = solarinc(nsolar,1)
-
-
-
-	do i=1,nvec
-
-		ephoton = e0+(ef-e0)*dble((i-1)/(nvec-1.0))
-
-		eaux= ((c*hev)/(ephoton+0.00000001))*1E9
-
-		call interp1Da(nsolar,solarinc,ephoton,res)
-
-		
-		isolar(i,1) = ephoton
-		isolar(i,2) = res
-		
-		
-		isolarm(i,1) = isolar(i,1)*1E-9
-		isolarm(i,2) = isolar(i,2)		
-		
-
-		sepflux(i,1) = isolarm(i,1)
-		sepflux(i,2) = isolarm(i,2)*(isolarm(i,1)/(h*c))
-		
-		!write(*,*) isolar(i,1),isolar(i,2)
-		!write(*,*) eaux
-		
-		!write(*,*) int(noptics)
-		
-		iabscoefsq(i,1) = ephoton
-		
-		if (eaux .ge. dirgap ) then
-		 
-		  iabscoefsq(i,2) = 1.0
-		  
-		else
-		
-		 iabscoefsq(i,2) = 0.0
-		 
-		end if	
-		
-	        !write(545,*) iabscoefsq(i,1),iabscoefsq(i,2)			
-
-
-		
-
-
-	end do
+    !homogeneizando os dados de input mediante interpolacao 
+    e0 = solarinc(1,1)
+    ef = solarinc(nsolar,1)
 
 
 
-	!write(*,*) isolarm(1,1),isolarm(1,2)
+    do i=1,nvec
+
+        ephoton = e0+(ef-e0)*dble((i-1)/(nvec-1.0))
+
+        eaux= ((c*hev)/(ephoton+0.00000001))*1E9
+
+        call interp1Da(nsolar,solarinc,ephoton,res)
+
+        
+        isolar(i,1) = ephoton
+        isolar(i,2) = res
+        
+        
+        isolarm(i,1) = isolar(i,1)*1E-9
+        isolarm(i,2) = isolar(i,2)      
+        
+
+        sepflux(i,1) = isolarm(i,1)
+        sepflux(i,2) = isolarm(i,2)*(isolarm(i,1)/(h*c))
+        
+        !write(*,*) isolar(i,1),isolar(i,2)
+        !write(*,*) eaux
+        
+        !write(*,*) int(noptics)
+        
+        iabscoefsq(i,1) = ephoton
+        
+        if (eaux .ge. dirgap ) then
+         
+          iabscoefsq(i,2) = 1.0
+          
+        else
+        
+         iabscoefsq(i,2) = 0.0
+         
+        end if  
+        
+            !write(545,*) iabscoefsq(i,1),iabscoefsq(i,2)           
 
 
-	call blackbody(nvec,ctemp,isolarm,bbir,bbpflux)
+        
+
+
+    end do
 
 
 
-	!calculo de pin, potencia incidente
-	call integral1D(nvec,isolar,pin)
-	
-	
+    !write(*,*) isolarm(1,1),isolarm(1,2)
 
-	!write(*,*) pin
-	
-	do i=1,nvec
-	
-		ephoton = e0+(ef-e0)*dble((i-1)/(nvec-1.0))
 
-		eaux= ((c*hev)/(ephoton+0.00000001))*1E9
-		
-		call interp1Da(int(noptics),abscoef,eaux,res2)
+    call blackbody(nvec,ctemp,isolarm,bbir,bbpflux)
 
-		
-		if ( res2 .lt. 0D0) then !avoid interpolation problems
-		
-			res2 = 0.000
-		
-		end if
 
-		!write(*,*) eaux,res2
 
-		
+    !calculo de pin, potencia incidente
+    call integral1D(nvec,isolar,pin)
+    
+    
 
-		iabscoef(i,1) = ephoton
-		
-		if (eaux .le. dirgap) then
-		
-		 iabscoef(i,2) = 0.0
-		
-		else
-		
-		 iabscoef(i,2) = res2*100.00
-		
-		end if
-		
-		!write(*,*) iabscoef(i,1),iabscoef(i,2)			
-	
-	end do
-	
-	!write(*,*) isolar(1,1),isolar(1,2)	
-	
-	
+    !write(*,*) pin
+    
+    do i=1,nvec
+    
+        ephoton = e0+(ef-e0)*dble((i-1)/(nvec-1.0))
 
-	!call slme(nvec,bbpflux,sepflux,iabscoef,isolar,thick,pin,fr,pm,jsc1,voc,pcemax)
-	
-	if(Process==0) write(600,*) "SQ-Limit"
-	call sq(nvec,ctemp,bbpflux,sepflux,iabscoefsq,isolar,pin,1d0,pm,jsc1,j01,j1,j2,vmaxt,voct,ff,pce)
+        eaux= ((c*hev)/(ephoton+0.00000001))*1E9
+        
+        call interp1Da(int(noptics),abscoef,eaux,res2)
+
+        
+        if ( res2 .lt. 0D0) then !avoid interpolation problems
+        
+            res2 = 0.000
+        
+        end if
+
+        !write(*,*) eaux,res2
+
+        
+
+        iabscoef(i,1) = ephoton
+        
+        if (eaux .le. dirgap) then
+        
+         iabscoef(i,2) = 0.0
+        
+        else
+        
+         iabscoef(i,2) = res2*100.00
+        
+        end if
+        
+        !write(*,*) iabscoef(i,1),iabscoef(i,2)         
+    
+    end do
+    
+    !write(*,*) isolar(1,1),isolar(1,2) 
+    
+    
+
+    !call slme(nvec,bbpflux,sepflux,iabscoef,isolar,thick,pin,fr,pm,jsc1,voc,pcemax)
+    
+    if(Process==0) write(600,*) "SQ-Limit"
+    call sq(nvec,ctemp,bbpflux,sepflux,iabscoefsq,isolar,pin,1d0,pm,jsc1,j01,j1,j2,vmaxt,voct,ff,pce)
  if(Process==0) then
-	write(600,*) '#Jsc:',jsc1,'W/Vm^{2}'
-	write(600,*) '#Vmax:',vmaxt,'V'
-	write(600,*) '#Voc:',voct,'V'
-	write(600,*) "#SQ-PCE",pce*100,"%"
-	write(600,*) "#FF",ff*100,"%"	
-	write(600,*) 	
-	write(600,*) "SLME-Limit"	
+    write(600,*) '#Jsc:',jsc1,'W/Vm^{2}'
+    write(600,*) '#Vmax:',vmaxt,'V'
+    write(600,*) '#Voc:',voct,'V'
+    write(600,*) "#SQ-PCE",pce*100,"%"
+    write(600,*) "#FF",ff*100,"%"   
+    write(600,*)    
+    write(600,*) "SLME-Limit"   
  endif
-	call sq(nvec,ctemp,bbpflux,sepflux,iabscoefsq,isolar,pin,fr,pm,jsc1,j01,j1,j2,vmaxt,voct,ff,pce)
+    call sq(nvec,ctemp,bbpflux,sepflux,iabscoefsq,isolar,pin,fr,pm,jsc1,j01,j1,j2,vmaxt,voct,ff,pce)
  if(Process==0) then
-	write(600,*) '#Jsc:',jsc1,'W/Vm^{2}'
-	write(600,*) '#Vmax:',vmaxt,'V'
-	write(600,*) '#Voc:',voct,'V'
-	write(600,*) '#fr:',fr	
-	write(600,*) "#SLME_max-PCE",pce*100,"%"
-	write(600,*) "#FF",ff*100,"%"			
+    write(600,*) '#Jsc:',jsc1,'W/Vm^{2}'
+    write(600,*) '#Vmax:',vmaxt,'V'
+    write(600,*) '#Voc:',voct,'V'
+    write(600,*) '#fr:',fr  
+    write(600,*) "#SLME_max-PCE",pce*100,"%"
+    write(600,*) "#FF",ff*100,"%"           
  endif
-	pceaux = 0.0
+    pceaux = 0.0
 
 
 
-	if(Process==0) write(700,*) "# thickness,pce,jmax,j0,jsc,vmax,voc,ff"
+    if(Process==0) write(700,*) "# thickness,pce,jmax,j0,jsc,vmax,voc,ff"
 
 !go to 155
-	
-	do i=1,nth
-		
-		thickness = thickmin+(thickmaxm-thickmin)*dble((i-1.0)/(nth-1.0))
-		
-		call absorbance(nvec,iabscoef,thickness,absc)
-		absc2=absc(2:nvec,:)
+    
+    do i=1,nth
+        
+        thickness = thickmin+(thickmaxm-thickmin)*dble((i-1.0)/(nth-1.0))
+        
+        call absorbance(nvec,iabscoef,thickness,absc)
+        absc2=absc(2:nvec,:)
 
-		call slme(nvec-1,ctemp,voct,bbpflux,sepflux,absc2,isolar,pin,fr,pm,jsc1,j01,j1,j2,vmax,voc,ff,pce)		
+        call slme(nvec-1,ctemp,voct,bbpflux,sepflux,absc2,isolar,pin,fr,pm,jsc1,j01,j1,j2,vmax,voc,ff,pce)      
 
-	Format = "(2E15.5,6E15.5)"
-	!write(*,"(8F10.3)") real(thickness*1E6),real(pce*100.0),real(j1),real(j01),real(jsc1),real(voc),real(j2),real(pm)
-	if(Process==0) write(700,Format) real(thickness*1E6),real(pce*100.0),real(j1),real(j01),real(jsc1),real(vmax),&
-			 real(voc),real(ff*100)
+    Format = "(2E15.5,6E15.5)"
+    !write(*,"(8F10.3)") real(thickness*1E6),real(pce*100.0),real(j1),real(j01),real(jsc1),real(voc),real(j2),real(pm)
+    if(Process==0) write(700,Format) real(thickness*1E6),real(pce*100.0),real(j1),real(j01),real(jsc1),real(vmax),&
+             real(voc),real(ff*100)
 
-	!absc= 0.0
+    !absc= 0.0
 
 
-		if (pce .gt. pceaux) then
-			pceaux = pce
+        if (pce .gt. pceaux) then
+            pceaux = pce
 
-			faux1 = thickness
-			faux2 = fr
-			faux3 = jsc1
-			faux4 = j01
-			faux5 = j1
-			faux6 = voc
-			faux7 = pce
-			faux8 = vmax
-			faux9 = ff			
-		end if
-		
-	!write(*,*) thickness,pce
-	end do
+            faux1 = thickness
+            faux2 = fr
+            faux3 = jsc1
+            faux4 = j01
+            faux5 = j1
+            faux6 = voc
+            faux7 = pce
+            faux8 = vmax
+            faux9 = ff          
+        end if
+        
+    !write(*,*) thickness,pce
+    end do
 
  if(Process==0) then
-	write(700,*) '#Jsc:',faux3,'W/Vm^{2}'
-	write(700,*) '#Vmax:',faux8,'V'
-	write(700,*) '#Voc:',faux6,'V'	
-	write(700,*) '#fr:',faux2
-	write(700,*) "#SLME-max",faux7*100.00,"%"
-	write(700,*) '#Thickness:',faux1*1E6,'micro m'
-	write(700,*) "#FF",faux9*100.00,"%"	
+    write(700,*) '#Jsc:',faux3,'W/Vm^{2}'
+    write(700,*) '#Vmax:',faux8,'V'
+    write(700,*) '#Voc:',faux6,'V'  
+    write(700,*) '#fr:',faux2
+    write(700,*) "#SLME-max",faux7*100.00,"%"
+    write(700,*) '#Thickness:',faux1*1E6,'micro m'
+    write(700,*) "#FF",faux9*100.00,"%" 
  endif
 155 continue
 
-	deallocate(solarinc)
+    deallocate(solarinc)
 
  if(Process==0) then
-	close(500)
-	close(600)
-	close(700)	
+    close(500)
+    close(600)
+    close(700)  
  endif
 end subroutine pcecalc
 
@@ -11751,202 +11751,202 @@ end subroutine pcecalc
 
 subroutine slme(ndim,ctemp,trial,bbpflux,sepflux,absc,isolar,pin,fr,pm,jsc1,j01,j1,j2,vmax,voc,ff,pce)
 
-	implicit none
+    implicit none
 
-	integer :: ndim,m,kp,i
-	double precision,dimension(ndim,2) :: bbpflux,sepflux,isolar
-	double precision,dimension(ndim,2) :: absc,auxvec
-	double precision :: pce,fr,pin,pm
-	double precision :: j0r,j0,jsc,thickness,jsc1,j01,j1,j2
-	double precision :: voc, vmax, aux1,trial,ff
+    integer :: ndim,m,kp,i
+    double precision,dimension(ndim,2) :: bbpflux,sepflux,isolar
+    double precision,dimension(ndim,2) :: absc,auxvec
+    double precision :: pce,fr,pin,pm
+    double precision :: j0r,j0,jsc,thickness,jsc1,j01,j1,j2
+    double precision :: voc, vmax, aux1,trial,ff
 
-	double precision,dimension(1) :: x0,x,y0,y
-	double precision :: fx
-!	double precision,external :: negpower,vocf
-	
-	double precision,parameter :: c =299792458.0 !speed of light, m/s
-	double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
-	double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
-	double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    double precision,dimension(1) :: x0,x,y0,y
+    double precision :: fx
+!   double precision,external :: negpower,vocf
+    
+    double precision,parameter :: c =299792458.0 !speed of light, m/s
+    double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
+    double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
+    double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
 
-	double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
-	double precision,parameter :: pi=acos(-1.0)	
-	double precision :: tkv,ctemp
-	
-	double precision,parameter :: delta_tol= 10**(-7.0d0)
-	double precision,parameter :: delta= 0.2D+00
-	integer,parameter :: k_max = 200 	
+    double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
+    double precision,parameter :: pi=acos(-1.0) 
+    double precision :: tkv,ctemp
+    
+    double precision,parameter :: delta_tol= 10**(-7.0d0)
+    double precision,parameter :: delta= 0.2D+00
+    integer,parameter :: k_max = 200    
 
-	common /dados/ jsc,j0,tkv 
-	
-	tkv = ctemp
-	
-	!call absorbance(ndim,iabscoef,thickness,absc)
-	!absc=1.0
+    common /dados/ jsc,j0,tkv 
+    
+    tkv = ctemp
+    
+    !call absorbance(ndim,iabscoef,thickness,absc)
+    !absc=1.0
 
-	!calculando j0r e j0
-	auxvec = 0.0
-	do i=1,ndim
-	auxvec(i,1) = sepflux(i,1)
-	auxvec(i,2) = bbpflux(i,2)*absc(i,2) 
-	end do
-
-
-	call integral1D(ndim,auxvec,j0r)
-	j0r = e*pi*j0r
-	j0 = j0r/fr
-
-	j01= j0
-
-	!write(*,*) "J0r:",j0r
-	!write(*,*) "J0:",j0
-
-	!write(*,*) fr
-
-	!calculando jsc
-	auxvec = 0.0
-	do i=1,ndim
-	auxvec(i,1) = isolar(i,1)
-	auxvec(i,2) = sepflux(i,2)*absc(i,2) 
-	end do
-		
-	call integral1D(ndim,auxvec,jsc)
-	jsc = jsc*e
-
-	!write(*,*) "Jsc:",jsc
+    !calculando j0r e j0
+    auxvec = 0.0
+    do i=1,ndim
+    auxvec(i,1) = sepflux(i,1)
+    auxvec(i,2) = bbpflux(i,2)*absc(i,2) 
+    end do
 
 
+    call integral1D(ndim,auxvec,j0r)
+    j0r = e*pi*j0r
+    j0 = j0r/fr
 
-	m=1
-	x0(1)=trial
-	call compass_search ( negpower, m, x0, delta_tol,delta, k_max, x, fx, kp )
-	!x(1) = 0.08113602496880366
-	pm = -negpower(m, x(1))
-	
+    j01= j0
 
-	vmax = x(1)
-	
+    !write(*,*) "J0r:",j0r
+    !write(*,*) "J0:",j0
 
-	aux1= (e*vmax)/(k*tkv)
+    !write(*,*) fr
 
-	j2= j0*(dexp(aux1)-1.0)
-	j1= jsc-j0*(dexp(aux1)-1.0)
+    !calculando jsc
+    auxvec = 0.0
+    do i=1,ndim
+    auxvec(i,1) = isolar(i,1)
+    auxvec(i,2) = sepflux(i,2)*absc(i,2) 
+    end do
+        
+    call integral1D(ndim,auxvec,jsc)
+    jsc = jsc*e
 
-	jsc1 = jsc
+    !write(*,*) "Jsc:",jsc
 
-	!write(*,*) 'Voc:',x(1)
-	!write(*,*) 'P_in:',pin
-	!write(*,*) 'P_m:',pm
-	!pm=1.0
-	pce = pm/pin
 
-	!write(*,*) pce
-	
-	m=1
-	y0(1)=vmax
-	call compass_search ( vocf, m, y0, delta_tol,delta, k_max, y, fx, kp )
-	voc = y(1)	
 
-	ff = (j1*vmax)/(jsc1*voc)
+    m=1
+    x0(1)=trial
+    call compass_search ( negpower, m, x0, delta_tol,delta, k_max, x, fx, kp )
+    !x(1) = 0.08113602496880366
+    pm = -negpower(m, x(1))
+    
+
+    vmax = x(1)
+    
+
+    aux1= (e*vmax)/(k*tkv)
+
+    j2= j0*(dexp(aux1)-1.0)
+    j1= jsc-j0*(dexp(aux1)-1.0)
+
+    jsc1 = jsc
+
+    !write(*,*) 'Voc:',x(1)
+    !write(*,*) 'P_in:',pin
+    !write(*,*) 'P_m:',pm
+    !pm=1.0
+    pce = pm/pin
+
+    !write(*,*) pce
+    
+    m=1
+    y0(1)=vmax
+    call compass_search ( vocf, m, y0, delta_tol,delta, k_max, y, fx, kp )
+    voc = y(1)  
+
+    ff = (j1*vmax)/(jsc1*voc)
 
 end subroutine slme
 
 subroutine sq(ndim,ctemp,bbpflux,sepflux,iabscoef,isolar,pin,fr,pm,jsc1,j01,j1,j2,vmax,voc,ff,pce)
 
 
-	implicit none
+    implicit none
 
-	integer :: ndim,m,kp,i
-	double precision,dimension(ndim,2) :: bbpflux,sepflux,iabscoef,isolar
-	double precision,dimension(ndim,2) :: auxvec
-	double precision :: pce,fr,pin,pm
-	double precision :: j0r,j0,jsc,thickness,jsc1,j01,j1,j2
-	double precision :: voc,vmax,aux1,ff
+    integer :: ndim,m,kp,i
+    double precision,dimension(ndim,2) :: bbpflux,sepflux,iabscoef,isolar
+    double precision,dimension(ndim,2) :: auxvec
+    double precision :: pce,fr,pin,pm
+    double precision :: j0r,j0,jsc,thickness,jsc1,j01,j1,j2
+    double precision :: voc,vmax,aux1,ff
 
-	double precision,dimension(1) :: x0,x,y,y0
-	double precision :: fx
-!	double precision,external :: negpower,vocf
-	
-	double precision,parameter :: c =299792458.0 !speed of light, m/s
-	double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
-	double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
-	double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    double precision,dimension(1) :: x0,x,y,y0
+    double precision :: fx
+!   double precision,external :: negpower,vocf
+    
+    double precision,parameter :: c =299792458.0 !speed of light, m/s
+    double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
+    double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
+    double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
 
-	double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
-	double precision,parameter :: pi=acos(-1.0)	
-	double precision :: tkv,ctemp
-	
-	double precision,parameter :: delta_tol= 10**(-7.0d0)
-	double precision,parameter :: delta= 0.2D+00
-	integer,parameter :: k_max = 200 	
+    double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
+    double precision,parameter :: pi=acos(-1.0) 
+    double precision :: tkv,ctemp
+    
+    double precision,parameter :: delta_tol= 10**(-7.0d0)
+    double precision,parameter :: delta= 0.2D+00
+    integer,parameter :: k_max = 200    
 
-	common /dados/ jsc,j0,tkv 
-	
-	tkv = ctemp	
+    common /dados/ jsc,j0,tkv 
+    
+    tkv = ctemp 
 
-	!calculando j0r e j0
-	auxvec = 0.0
-	do i=1,ndim
-	auxvec(i,1) = sepflux(i,1)
-	auxvec(i,2) = bbpflux(i,2)*iabscoef(i,2) 
-	end do
+    !calculando j0r e j0
+    auxvec = 0.0
+    do i=1,ndim
+    auxvec(i,1) = sepflux(i,1)
+    auxvec(i,2) = bbpflux(i,2)*iabscoef(i,2) 
+    end do
 
-	call integral1D(ndim,auxvec,j0r)
-	j0r = e*pi*j0r
-	j0 = j0r/fr
+    call integral1D(ndim,auxvec,j0r)
+    j0r = e*pi*j0r
+    j0 = j0r/fr
 
-	j01= j0
+    j01= j0
 
-	!write(*,*) "J0r:",j0r
-	!write(*,*) "J0:",j0
+    !write(*,*) "J0r:",j0r
+    !write(*,*) "J0:",j0
 
-	!write(*,*) fr
+    !write(*,*) fr
 
-	!calculando jsc
-	auxvec = 0.0
-	do i=1,ndim
-	auxvec(i,1) = isolar(i,1)
-	auxvec(i,2) = sepflux(i,2)*iabscoef(i,2) 
-	end do
-		
-	call integral1D(ndim,auxvec,jsc)
-	jsc = jsc*e
+    !calculando jsc
+    auxvec = 0.0
+    do i=1,ndim
+    auxvec(i,1) = isolar(i,1)
+    auxvec(i,2) = sepflux(i,2)*iabscoef(i,2) 
+    end do
+        
+    call integral1D(ndim,auxvec,jsc)
+    jsc = jsc*e
 
-	!write(*,*) "Jsc:",jsc
+    !write(*,*) "Jsc:",jsc
 
-	m=1
-	x0(1)=0.1
-	call compass_search ( negpower, m, x0, delta_tol,delta, k_max, x, fx, kp )
-	!x(1) = 0.08113602496880366
-	pm = -negpower(m, x(1))
-	vmax = x(1)
-	
-	aux1= (e*vmax)/(k*tkv)
+    m=1
+    x0(1)=0.1
+    call compass_search ( negpower, m, x0, delta_tol,delta, k_max, x, fx, kp )
+    !x(1) = 0.08113602496880366
+    pm = -negpower(m, x(1))
+    vmax = x(1)
+    
+    aux1= (e*vmax)/(k*tkv)
 
-	j2= j0*(dexp(aux1)-1.0)
-	j1= jsc-j0*(dexp(aux1)-1.0)
+    j2= j0*(dexp(aux1)-1.0)
+    j1= jsc-j0*(dexp(aux1)-1.0)
 
-	jsc1 = jsc
+    jsc1 = jsc
 
-	!write(*,*) 'Voc:',x(1)
-	!write(*,*) 'P_in:',pin
-	!write(*,*) 'P_m:',pm
-	!pm=1.0
-	pce = pm/pin
+    !write(*,*) 'Voc:',x(1)
+    !write(*,*) 'P_in:',pin
+    !write(*,*) 'P_m:',pm
+    !pm=1.0
+    pce = pm/pin
 
-	!write(*,*) pce
+    !write(*,*) pce
 
-	m=1
-	y0(1)=vmax
-	call compass_search ( vocf, m, y0, delta_tol,delta, k_max, y, fx, kp )
-	voc = y(1)
+    m=1
+    y0(1)=vmax
+    call compass_search ( vocf, m, y0, delta_tol,delta, k_max, y, fx, kp )
+    voc = y(1)
 
 
-	ff = (j1*vmax)/(jsc1*voc)
+    ff = (j1*vmax)/(jsc1*voc)
 
 
 end subroutine sq
@@ -11954,201 +11954,201 @@ end subroutine sq
 
 real(8) function vocf(m, x)
 
-	implicit none
+    implicit none
 
-	integer :: m
-	double precision :: x
-	double precision :: jsc,j0
-	double precision :: tkv
-	
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K	
+    integer :: m
+    double precision :: x
+    double precision :: jsc,j0
+    double precision :: tkv
+    
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K    
 
-	double precision :: aux1
+    double precision :: aux1
 
-	common /dados/ jsc,j0,tkv 
+    common /dados/ jsc,j0,tkv 
 
 
-	aux1= (e*x)/(k*tkv)
+    aux1= (e*x)/(k*tkv)
 
-	vocf=abs(jsc-j0*(dexp(aux1)-1.0))
-		
+    vocf=abs(jsc-j0*(dexp(aux1)-1.0))
+        
 
 end function vocf
 
 real(8) function negpower(m, x)
 
-	implicit none
+    implicit none
 
-	integer :: m
-	double precision :: x
-	double precision :: jsc,j0
-	double precision :: tkv
+    integer :: m
+    double precision :: x
+    double precision :: jsc,j0
+    double precision :: tkv
 
-	double precision :: aux1
-	
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K		
+    double precision :: aux1
+    
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K        
 
-	common /dados/ jsc,j0,tkv
+    common /dados/ jsc,j0,tkv
 
 
-	aux1= (e*x)/(k*tkv)
+    aux1= (e*x)/(k*tkv)
 
-	negpower=-(jsc-j0*(dexp(aux1)-1.0))*x
-		
+    negpower=-(jsc-j0*(dexp(aux1)-1.0))*x
+        
 
 end function negpower
 
 subroutine blackbody(ndim,tkv,isolarm,bbir,bbpflux)
 
 
-	implicit none
+    implicit none
 
-	integer :: i,ndim
-	double precision,dimension(ndim,2) :: isolarm
-	double precision,dimension(ndim,2) :: bbir,bbpflux
-	double precision,parameter :: c =299792458.0 !speed of light, m/s
-	double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
-	double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
-	double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    integer :: i,ndim
+    double precision,dimension(ndim,2) :: isolarm
+    double precision,dimension(ndim,2) :: bbir,bbpflux
+    double precision,parameter :: c =299792458.0 !speed of light, m/s
+    double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
+    double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
+    double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
 
-	double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
-	double precision,parameter :: pi=acos(-1.0)	
+    double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
+    double precision,parameter :: pi=acos(-1.0) 
 
-	double precision :: aux1,tkv
-
-
-	aux1=2.0*pi*h*c*c
+    double precision :: aux1,tkv
 
 
-	do i=1,ndim
+    aux1=2.0*pi*h*c*c
 
-		bbir(i,1) = isolarm(i,1)
-		bbir(i,2) = (aux1/(isolarm(i,1)**5))*(1.0/(dexp(h*c/(isolarm(i,1)*k*tkv))-1.0))
 
-		bbpflux(i,1) = isolarm(i,1)
-		bbpflux(i,2) = bbir(i,2)*(isolarm(i,1)/(h*c))
-	
-	end do
+    do i=1,ndim
+
+        bbir(i,1) = isolarm(i,1)
+        bbir(i,2) = (aux1/(isolarm(i,1)**5))*(1.0/(dexp(h*c/(isolarm(i,1)*k*tkv))-1.0))
+
+        bbpflux(i,1) = isolarm(i,1)
+        bbpflux(i,2) = bbir(i,2)*(isolarm(i,1)/(h*c))
+    
+    end do
 
 end subroutine blackbody
 
 subroutine absorbance2x(ndim,input,thickness,absc)
 
 
-	implicit none
-	
-	integer :: i
-	integer :: ndim
-	double precision,dimension(ndim,2) :: input,absc
-	double precision :: thickness
-	double precision :: aux
-	
-	double precision,parameter :: c =299792458.0 !speed of light, m/s
-	double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
-	double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
-	double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
-	double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
-	double precision,parameter :: e =1.602176620898E-19 !Coulomb
+    implicit none
+    
+    integer :: i
+    integer :: ndim
+    double precision,dimension(ndim,2) :: input,absc
+    double precision :: thickness
+    double precision :: aux
+    
+    double precision,parameter :: c =299792458.0 !speed of light, m/s
+    double precision,parameter :: h =6.62607004081E-34 !Planck's constant J*s (W)
+    double precision,parameter :: heV =4.135667516E-15  !Planck's constant eV*s
+    double precision,parameter :: k =1.3806485279E-23  !Boltzmann's constant J/K
+    double precision,parameter :: keV =8.617330350E-5  !Boltzmann's constant eV/K
+    double precision,parameter :: e =1.602176620898E-19 !Coulomb
 
-	double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
-	double precision,parameter :: pi=acos(-1.0)	
+    double precision,parameter :: jev=6.24150913E18 !conversion factor joule to eV
+    double precision,parameter :: pi=acos(-1.0) 
 
 
-	do i=1,ndim
+    do i=1,ndim
 
-	absc(i,1) = input(i,1)
-	absc(i,2) = 1.0-dexp(-2.0*thickness*input(i,2))
-	!absc(i,2) = 1.0
-	
-	aux = 2*absc(i,2)
-	if ( aux .gt. 1.0) then
-		aux = 1.0
-	end if
-	
-	absc(i,2) = aux
+    absc(i,1) = input(i,1)
+    absc(i,2) = 1.0-dexp(-2.0*thickness*input(i,2))
+    !absc(i,2) = 1.0
+    
+    aux = 2*absc(i,2)
+    if ( aux .gt. 1.0) then
+        aux = 1.0
+    end if
+    
+    absc(i,2) = aux
 
-	end do
+    end do
 
 end subroutine absorbance2x
 
 subroutine absorbance(ndim,input,thickness,absc)
 
-	implicit none
-	
-	integer :: i
-	integer :: ndim
-	double precision,dimension(ndim,2) :: input,absc
-	double precision :: thickness
+    implicit none
+    
+    integer :: i
+    integer :: ndim
+    double precision,dimension(ndim,2) :: input,absc
+    double precision :: thickness
 
 
-	do i=1,ndim
+    do i=1,ndim
 
-	absc(i,1) = input(i,1)
-	absc(i,2) = 1.0-dexp(-2.0*thickness*input(i,2))
-	!absc(i,2) = 1.0
+    absc(i,1) = input(i,1)
+    absc(i,2) = 1.0-dexp(-2.0*thickness*input(i,2))
+    !absc(i,2) = 1.0
 
-	end do
+    end do
 
 end subroutine absorbance
 
 
 subroutine interp1Da(ndim,vec,x,res)
 
-	implicit none
+    implicit none
 
-	integer :: ndim,i,iaux
-	double precision,dimension(ndim,2) :: vec
-	double precision :: x,res
+    integer :: ndim,i,iaux
+    double precision,dimension(ndim,2) :: vec
+    double precision :: x,res
 
-	do i=1,ndim
+    do i=1,ndim
 
-		if (x .le. vec(i,1)) then
+        if (x .le. vec(i,1)) then
 
-			iaux=i
+            iaux=i
 
-			go to 105
-		else
-			continue
-		end if
+            go to 105
+        else
+            continue
+        end if
 
-	end do
+    end do
 
 105 continue
         
-	res= vec(iaux-1,2) + (x-vec(iaux-1,1))*((vec(iaux,2)-vec(iaux-1,2))/(vec(iaux,1)-vec(iaux-1,1)))
+    res= vec(iaux-1,2) + (x-vec(iaux-1,1))*((vec(iaux,2)-vec(iaux-1,2))/(vec(iaux,1)-vec(iaux-1,1)))
 
 end subroutine interp1Da
 
 subroutine integral1D(ndim,vec,resultado)
 
-	implicit none
-	
-	integer :: ndim,i
-	double precision :: resultado,f,flag1,flag2
-	double precision:: dx
-	
-	double precision, dimension(ndim,2) :: vec
-		
-	dx= abs(vec(2,1)-vec(1,1))
+    implicit none
+    
+    integer :: ndim,i
+    double precision :: resultado,f,flag1,flag2
+    double precision:: dx
+    
+    double precision, dimension(ndim,2) :: vec
+        
+    dx= abs(vec(2,1)-vec(1,1))
 
 
-	flag2=0
-	
-	do i=1,ndim-1
-	
-		flag1= (vec(i,2)+vec(i+1,2))*(dx/2.)
-		
-		flag2=flag2+flag1
-	
-		!write(*,*) "progresso:",i,"/",npassos
+    flag2=0
+    
+    do i=1,ndim-1
+    
+        flag1= (vec(i,2)+vec(i+1,2))*(dx/2.)
+        
+        flag2=flag2+flag1
+    
+        !write(*,*) "progresso:",i,"/",npassos
 
-	end do
-	
-	resultado=flag2
+    end do
+    
+    resultado=flag2
 
 
 end subroutine integral1D
