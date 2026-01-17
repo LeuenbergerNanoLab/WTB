@@ -9,7 +9,8 @@ See also [WanTiBexos Docs](https://wantibexos.readthedocs.io/en/latest/)
 ## Verison 1.0.1
 The code adapted for GNU compiler:
 - removed tabs;
-- corrected formats.
+- corrected formats;
+- fixed problems with open/close units.
 
 ## Version 1.0
 What's new:
