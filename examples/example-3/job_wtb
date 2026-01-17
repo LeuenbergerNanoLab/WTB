@@ -1,0 +1,61 @@
+#!/bin/bash
+#SBATCH --job-name=WTB
+#SBATCH --time=1:00:00
+#SBATCH --nodes=1 
+#SBATCH --ntasks-per-node=48
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=384000
+#SBATCH --account=mleuenberger
+#SBATCH --mail-user=d.g.skachkov@gmail.com
+#SBATCH --mail-type=END,FAIL
+#SBATCH --error=error.txt
+#SBATCH --output=output.txt
+
+module load oneapi/oneapi-2023.1.0/mpi/mpi-2021.9.0 
+module load openblas/openblas-0.3.25-oneapi-2023.1.0
+
+
+
+### WanTiBEXOS
+
+wtbexec="/lustre/fs1/home/dm606074/WTB/bin/wtb.x"
+
+mkdir -p ./out
+
+
+
+cat > input_mos2_opt.dat << EOF
+NTHREADS= 1
+SYSDIM= "2D"
+DFT= "V"
+
+OUTPUT= "./out/"
+CALC_DATA= "./out/"
+PARAMS_FILE= "tb_mos2.dat"
+
+
+MESH_TYPE= "RK2D"
+RK= 120
+
+BSE= T
+SPEC= T
+DTDIAG= T
+
+COULOMB_POT= V2DT2
+NBANDSC= 2
+NBANDSV= 2
+LC= 8.00
+
+CSHIFT= 0.08
+ENSPECI= 0.0
+ENSPECF= 4.0
+
+EOF
+
+
+mpirun   -np 48 $wtbexec < input_mos2_opt.dat
+
+
+
+
+
