@@ -24,12 +24,6 @@ Configure the package with complex scalars
 
 > ./configure --with-scalar-type=complex --with-debugging=no
 
-Then you need to request interactive job because installation of big packages on STOKES is prohibited:
-
-> salloc --time=1:00:00 --cpus-per-task=4 --mem=8G
-
-> conda deactivate
-
 Make installation (the actual installation command will be provided by *configure*):
 
 > make PETSC_DIR=/lustre/fs1/home/dm606074/WTB/src/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt all
@@ -99,6 +93,12 @@ Configure the package with SLEPc library:
 --download-slepc=https://slepc.upv.es/download/distrib/slepc-3.22.2.tar.gz \
 --with-clean=1
 ```
+
+Then you need to request interactive job because installation of big packages on STOKES is prohibited:
+
+> salloc --time=1:00:00 --cpus-per-task=4 --mem=8G
+
+> conda deactivate
 
 Make installation:
 
