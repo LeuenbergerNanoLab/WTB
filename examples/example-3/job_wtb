@@ -5,8 +5,8 @@
 #SBATCH --ntasks-per-node=48
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=384000
-#SBATCH --account=mleuenberger
-#SBATCH --mail-user=d.g.skachkov@gmail.com
+#SBATCH --account=<ACCOUNT>
+#SBATCH --mail-user=<EMAIL>
 #SBATCH --mail-type=END,FAIL
 #SBATCH --error=error.txt
 #SBATCH --output=output.txt
@@ -53,7 +53,7 @@ ENSPECF= 4.0
 EOF
 
 
-mpirun   -np 48 $wtbexec < input_mos2_opt.dat
+mpirun -np 48 $wtbexec < input_mos2_opt.dat
 
 
 
