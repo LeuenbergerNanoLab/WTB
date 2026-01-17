@@ -165,7 +165,7 @@ call P_wait
      call MSG('MAIN: call berrycurv')
 	 call berrycurv(nthreads,outputfolder,params,kpaths,sme)
 	 if(Process==0) write(2077,*) "Berry curvature in kpath finished"
-     if(Process) call flush(2077)
+     if(Process==0) call flush(2077)
 	end if
 
 	if (berrybz) then
