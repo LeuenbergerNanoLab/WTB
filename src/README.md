@@ -94,7 +94,7 @@ Configure the package with SLEPc library:
 --with-clean=1
 ```
 
-Then you need to request interactive job because installation of big packages on STOKES is prohibited:
+Then you need to request interactive job because installation of big packages on STOKES is prohibited on login node:
 
 > salloc --time=1:00:00 --cpus-per-task=4 --mem=8G
 
