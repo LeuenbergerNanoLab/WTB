@@ -123,4 +123,6 @@ Go to WTB directory and make *bin* folder:
 
 Make installation of WTB package:
 
+> make clean
+
 > make 2> warnings.txt
