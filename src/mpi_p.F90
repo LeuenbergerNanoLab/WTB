@@ -133,27 +133,30 @@
 
    subroutine MSG(comment)
     character(*)          :: comment
-    integer               :: l1
-    l1 = len(trim(adjustl(comment)))
+ !   integer               :: l1
+ !   l1 = len(trim(adjustl(comment)))
     if(Process==0) print 1,trim(adjustl(comment))
- 1  format(A<l1>)
+ 1  format(A)
    end subroutine MSG
 
 
    subroutine MSGT(comment)
     character(*)          :: comment
-    integer               :: l1,l2
+    integer               :: l1     !,l2
+    character(len=60)     :: cp
     call cpu_time(Ptf)
+    cp = ' '
     l1 = len(trim(adjustl(comment)))
     if(l1>=60) then
      if(Process==0) print 1,trim(adjustl(comment)),(Ptf-Pt0)
     else
-     l2 = 60 - l1
-     if(Process==0) print 2,trim(adjustl(comment)),' ',(Ptf-Pt0)
+  !   l2 = 60 - l1
+     cp(1:l1) = trim(adjustl(comment))
+     if(Process==0) print 2,cp,(Ptf-Pt0)
     endif
     Pt0 = Ptf
- 1  format(A<l1>,' (',F10.3,' s)')
- 2  format(A<l1>,A<l2>,' (',F10.3,' s)')
+ 1  format(A,' (',F10.3,' s)')
+ 2  format(A60,' (',F10.3,' s)')
    end subroutine MSGT
 
 
