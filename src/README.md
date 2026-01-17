@@ -66,7 +66,34 @@ Go to *src* folder and make installation of WTB package
 
 > make
 
+## Installation on STOKES cluster of UCF, 1/16/2026
 
+Load the modules:
 
+> module load oneapi/oneapi-2023.1.0/mpi/mpi-2021.9.0 
 
-  
+> module load openblas/openblas-0.3.25-oneapi-2023.1.0
+
+Deactivate Conda:
+
+> conda deactivate
+
+Download PETSc library archive in *src* folder:
+
+> wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.22.2.tar.gz
+
+> cd petsc-3.22.2
+
+Configure the package with SLEPc library:
+```
+./configure --with-scalar-type=complex \
+--with-debugging=no \
+--download-slepc=https://slepc.upv.es/download/distrib/slepc-3.22.2.tar.gz \
+--with-clean=1
+```
+
+Make installation:
+
+> make PETSC_DIR=/lustre/fs1/home/dm606074/WTB/src/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt all
+
+This will install the PETSc and SLEPs libraries at petsc-3.22.2 and petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2 folders. 
