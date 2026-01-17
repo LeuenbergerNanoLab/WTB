@@ -6,7 +6,7 @@ see A.C. Dias, J.F.R.V. Silveira, F. Qu "WanTiBEXOS: A Wannier based Tight Bindi
 
 See also [WanTiBexos Docs](https://wantibexos.readthedocs.io/en/latest/)
 
-## Verison 1.0.1
+## Version 1.0.1
 The code adapted for GNU compiler:
 - removed tabs;
 - corrected formats;
