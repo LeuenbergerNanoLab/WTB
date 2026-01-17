@@ -147,7 +147,7 @@ call P_wait
 		     ebse0,ebsef,numbse,cshift,ktol,params,kpaths,kpathsbse,orbw,ediel, &
 		     exc,mshift,coultype,rk,meshtype,tmcoef)
 	 if(Process==0) write(2077,*) "Single particle dielectric calculation finished"
-     call flush(2077)
+     if(Process==0) call flush(2077)
 	end if
 
 	if (sppolbz) then
