@@ -97,3 +97,11 @@ Make installation:
 > make PETSC_DIR=/lustre/fs1/home/dm606074/WTB/src/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt all
 
 This will install the PETSc and SLEPs libraries at petsc-3.22.2 and petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2 folders. 
+
+Then you need to modify *makefile* accordingly:
+```
+export DIR=${PWD}
+export PETSC_DIR=${DIR}/petsc-3.22.2
+export SLEPC_DIR=${DIR}/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2
+export PETSC_ARCH=arch-linux-c-opt
+```
