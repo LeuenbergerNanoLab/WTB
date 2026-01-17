@@ -10,12 +10,12 @@
   subroutine print_calc_t(comment,t0,tf)
    character(*) :: comment
    real(8)      :: t0,tf
-   integer      :: l1
+!   integer      :: l1
     call cpu_time(tf)
-    l1 = len(trim(adjustl(comment)))
+!    l1 = len(trim(adjustl(comment)))
     print 1,trim(adjustl(comment)),tf-t0
     t0=tf
- 1  format(A<l1>,' t_calc=',F10.3,' s')    
+ 1  format(A,' t_calc=',F10.3,' s')    
   end subroutine print_calc_t
 
 
