@@ -169,8 +169,10 @@ export SLEPC_DIR=${DIR}/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.2
 export PETSC_ARCH=arch-linux-c-opt
 ```
 
-> mkdir ../bin
-
 Make installation of WTB package:
 
+> mkdir ../bin
+
 > make clean
+
+> make
