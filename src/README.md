@@ -139,6 +139,8 @@ Load the modules:
 
 Download PETSc library archive in *src* folder:
 
+> cd src
+
 > wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.22.2.tar.gz
 
 > tar -xvf petsc-3.22.2.tar.gz
