@@ -126,3 +126,51 @@ Make installation of WTB package:
 > make clean
 
 > make 2> warnings.txt
+
+## Installation on ANVIL cluster of Purdue University, 5/11/2026
+
+Load the modules:
+
+> module load intel/19.1.3.304 
+
+> module load mvapich2/2.3.6
+
+> module load openblas/0.3.17
+
+Download PETSc library archive in *src* folder:
+
+> wget https://web.cels.anl.gov/projects/petsc/download/release-snapshots/petsc-3.22.2.tar.gz
+
+> tar -xvf petsc-3.22.2.tar.gz
+
+> cd petsc-3.22.2
+
+Configure the package with SLEPc library:
+```
+./configure --with-scalar-type=complex \
+--with-debugging=no \
+--download-slepc=https://slepc.upv.es/download/distrib/slepc-3.22.2.tar.gz \
+--with-clean=1
+```
+
+Make installation:
+
+> make PETSC_DIR=/lustre/fs1/home/dm606074/WTB/src/petsc-3.22.2 PETSC_ARCH=arch-linux-c-opt all
+
+This will install the PETSc and SLEPs libraries at petsc-3.22.2 and petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2 folders. 
+
+> cd WTB/src
+
+Then you need to modify *makefile* in WTB/src accordingly:
+```
+export DIR=${PWD}
+export PETSC_DIR=${DIR}/petsc-3.22.2
+export SLEPC_DIR=${DIR}/petsc-3.22.2/arch-linux-c-opt/externalpackages/slepc-3.22.2
+export PETSC_ARCH=arch-linux-c-opt
+```
+
+> mkdir ../bin
+
+Make installation of WTB package:
+
+> make clean
